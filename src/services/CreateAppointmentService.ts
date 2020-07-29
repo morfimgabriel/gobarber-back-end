@@ -1,6 +1,7 @@
+import { startOfHour } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
 import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentRepository';
-import { startOfHour } from 'date-fns';
 
 /**
  * Recebimento das informacoes
@@ -8,40 +9,38 @@ import { startOfHour } from 'date-fns';
  * acesso ao repositório
  */
 
- interface Request {
-     provider: string;
-     date: Date;
- }
+interface Request {
+  provider: string;
+  date: Date;
+}
 
- /**
-  * Dependency Inversion ( SOLID )
-  *
-  */
+/**
+ * Dependency Inversion ( SOLID )
+ *
+ */
 
 class CreateAppointmentService {
-    private appointmentsRepository: AppointmentsRepository;
+  public async execute({ date, provider }: Request): Promise<Appointment> {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    const appointmentDate = startOfHour(date);
 
-    constructor(appointmentsRepository: AppointmentsRepository) {
-        this.appointmentsRepository = appointmentsRepository;
+    const findAppointmentInSameDate = await appointmentsRepository.findByDate(
+      appointmentDate,
+    );
+
+    if (findAppointmentInSameDate) {
+      throw Error('This Appointment is already booked');
     }
 
-    public execute({ date, provider }: Request): Appointment {
-        const appointmentDate = startOfHour(date);
+    const appointment = appointmentsRepository.create({
+      provider,
+      date: appointmentDate,
+    });
 
-        const findAppointmentInSameDate = this.appointmentsRepository.findByDate(
-            appointmentDate);
+    await appointmentsRepository.save(appointment);
 
-        if (findAppointmentInSameDate) {
-            throw Error('This Appointment is already booked');
-        }
-
-        const appointment = this.appointmentsRepository.create({
-            provider,
-            date: appointmentDate,
-        });
-
-        return appointment
-    }
+    return appointment;
+  }
 }
 
 export default CreateAppointmentService;
