@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Entity,
   Column,
@@ -15,7 +16,6 @@ class Appointment {
   id: string;
 
   @Column()
-  // eslint-disable-next-line camelcase
   provider_id: string;
 
   @ManyToOne(() => User)
@@ -26,11 +26,9 @@ class Appointment {
   date: Date;
 
   @CreateDateColumn()
-  // eslint-disable-next-line camelcase
   created_at: Date;
 
   @UpdateDateColumn()
-  // eslint-disable-next-line camelcase
   updated_at: Date;
 }
 
