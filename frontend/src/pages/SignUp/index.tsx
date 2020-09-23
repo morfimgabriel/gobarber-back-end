@@ -11,9 +11,6 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-
-  console.log(formRef);
-
   // eslint-disable-next-line @typescript-eslint/ban-types
   const handleSubmit = useCallback(async (data: object) => {
     try {
@@ -31,8 +28,6 @@ const SignUp: React.FC = () => {
         abortEarly: false,
       });
     } catch (err) {
-      console.log(err);
-
       const errors = getValidationErrors(err);
 
       formRef.current?.setErrors(errors);

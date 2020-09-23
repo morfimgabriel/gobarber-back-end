@@ -28,19 +28,22 @@ const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
     setIsfocused(true);
   }, []);
 
+  // Validacao se o campo esta populado para atribuir o css
   const handleInputBlur = useCallback(() => {
     setIsfocused(false);
     setisFilled(!!inputRef.current?.value);
   }, []);
 
+  // quando o componente (input) exibir em tela, estrutura os dados para ser usado ex {name: '', email:'' password: ''}
   useEffect(() => {
     registerField({
       name: fieldName,
-      ref: inputRef.current,
+      ref: inputRef.current, // da acesso ao input
       path: 'value',
     });
   }, [fieldName, registerField]);
 
+  // isErrored verifica se existe um error para acrescentar a cor vermelha no campo para indicar o erro
   return (
     <Container isErrored={!!error} isFilled={isFilled} isFocused={isFocused}>
       {Icon && <Icon size={20} />}
